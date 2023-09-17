@@ -1,8 +1,14 @@
 import { logDOM } from "@testing-library/react";
 import React, { useState } from "react";
 
-function Form({ setYearlyData }) {
-  const [userInput, setUserInput] = useState({});
+function Form(props) {
+  const initialInput = {
+    "current-savings": 1000,
+    "yearly-contribution": 1200,
+    "expected-return": 7,
+    duration: 10,
+  };
+  const [userInput, setUserInput] = useState(initialInput);
 
   const inputHandler = (e) => {
     console.log(
@@ -13,31 +19,13 @@ function Form({ setYearlyData }) {
     console.log("userInput - " + JSON.stringify(userInput));
   };
 
-  const calculateHandler = (e) => {
+  const resetHandler = () => {
+    setUserInput(initialInput);
+  };
+
+  const submitHandler = (e) => {
     e.preventDefault();
-
-    // Should be triggered when form is submitted
-    // You might not directly want to bind it to the submit event on the form though...
-
-    const yearlyData = []; // per-year results
-
-    let currentSavings = +userInput["current-savings"]; // feel free to change the shape of this input object!
-    const yearlyContribution = +userInput["yearly-contribution"]; // as mentioned: feel free to change the shape...
-    const expectedReturn = +userInput["expected-return"] / 100;
-    const duration = +userInput["duration"];
-
-    // The below code calculates yearly results (total savings, interest etc)
-    for (let i = 0; i < duration; i++) {
-      const yearlyInterest = currentSavings * expectedReturn;
-      currentSavings += yearlyInterest + yearlyContribution;
-      yearlyData.push({
-        // feel free to change the shape of the data pushed to the array!
-        year: i + 1,
-        yearlyInterest: yearlyInterest,
-        savingsEndOfYear: currentSavings,
-        yearlyContribution: yearlyContribution,
-      });
-    }
+    props.onCalculate(userInput);
   };
 
   return (
@@ -46,7 +34,12 @@ function Form({ setYearlyData }) {
         <div className="input-group">
           <p>
             <label htmlFor="current-savings">Current Savings ($)</label>
-            <input type="number" id="current-savings" onChange={inputHandler} />
+            <input
+              type="number"
+              id="current-savings"
+              onChange={inputHandler}
+              value={userInput["current-savings"]}
+            />
           </p>
           <p>
             <label htmlFor="yearly-contribution">Yearly Savings ($)</label>
@@ -54,6 +47,7 @@ function Form({ setYearlyData }) {
               type="number"
               id="yearly-contribution"
               onChange={inputHandler}
+              value={userInput["yearly-contribution"]}
             />
           </p>
         </div>
@@ -62,18 +56,28 @@ function Form({ setYearlyData }) {
             <label htmlFor="expected-return">
               Expected Interest (%, per year)
             </label>
-            <input type="number" id="expected-return" onChange={inputHandler} />
+            <input
+              type="number"
+              id="expected-return"
+              onChange={inputHandler}
+              value={userInput["expected-return"]}
+            />
           </p>
           <p>
             <label htmlFor="duration">Investment Duration (years)</label>
-            <input type="number" id="duration" onChange={inputHandler} />
+            <input
+              type="number"
+              id="duration"
+              onChange={inputHandler}
+              value={userInput["duration"]}
+            />
           </p>
         </div>
         <p className="actions">
-          <button type="reset" className="buttonAlt">
+          <button type="reset" className="buttonAlt" onClick={resetHandler}>
             Reset
           </button>
-          <button type="submit" onClick={calculateHandler} className="button">
+          <button type="submit" onClick={submitHandler} className="button">
             Calculate
           </button>
         </p>

@@ -1,6 +1,6 @@
 import React from "react";
 
-function Results() {
+function Results({ yearlyData, initialInvestment }) {
   return (
     <div>
       <table className="result">
@@ -14,13 +14,21 @@ function Results() {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>YEAR NUMBER</td>
-            <td>TOTAL SAVINGS END OF YEAR</td>
-            <td>INTEREST GAINED IN YEAR</td>
-            <td>TOTAL INTEREST GAINED</td>
-            <td>TOTAL INVESTED CAPITAL</td>
-          </tr>
+          {yearlyData.map((data) => (
+            <tr key={data.year}>
+              <td>{data.year}</td>
+              <td>{data.savingsEndOfYear}</td>
+              <td>{data.yearlyInterest}</td>
+              <td>
+                {data.savingsEndOfYear -
+                  initialInvestment -
+                  data.yearlyContribution * data.year}{" "}
+              </td>
+              <td>
+                {initialInvestment + data.yearlyContribution * data.year}{" "}
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
